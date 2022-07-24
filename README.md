@@ -36,7 +36,7 @@
 
 ## 4. Git Convention
 
-1. git commit
+1. git commit 
 
    1. 깃 커밋 시 하나의 기능만을 커밋하고, 여러 기능인 경우 기능별로 커밋한다.
    2. git commit 시 이슈번호와 커밋유형, 내용을 기록한다.
