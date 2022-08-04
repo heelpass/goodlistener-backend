@@ -49,5 +49,19 @@ jobs:
           
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
-    
+  http_request_automate_server:
+      needs: [node_ci,docker_build_push]
+      if: ${{ success() }}
+      runs-on: ubuntu-latest
+      steps:
+        - name: Deploy Stage
+          uses: fjogeleit/http-request-action@v1
+          with:
+            url: '${{ secrets.AUTOMATE_SERVER_URL }}'
+            method: 'POST'
+         #   username: ${{ secrets.AWX_USER }}
+         #   password: ${{ secrets.AWX_PASSWORD }}
+            customHeaders: '{"Content-Type": "application/json"}'
+            data: '{"token": "${{ secrets.AUTOMATE_SERVER_TOKEN }}" }'
+
     
