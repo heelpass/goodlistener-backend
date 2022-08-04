@@ -1,29 +1,50 @@
 # This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
 # For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
 
-name: Node.js CI
+name: CI/CD PipeLine
 
 on:
   push:
     branches: [ "develop" ]
 
 jobs:
-  build:
-  
+  node_ci:
     runs-on: ubuntu-latest
-
     strategy:
       matrix:
         node-version: [16.x]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
-
     steps:
     - uses: actions/checkout@v3
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v3
-   #   with:
-   #     node-version: ${{ matrix.node-version }}
-   #     cache: 'npm'
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'yarn'
     - run: yarn install --frozen-lockfile
     - run: yarn test
+    
+  docker_build_push:
+    needs: node_ci
+    if: ${{ success() }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Login to DockerHub
+        uses: docker/login-action@v1 
+        with:
+          username: ${{ secrets.DOCKER_HUB_LOGIN_EMAIL }}
+          password: ${{ secrets.DOCKER_HUB_LOGIN_PASSWORD }}
+          
+      - name: Docker Images Build and push
+        id: docker_build
+        uses: docker/build-push-action@v2
+        with:
+          context: ./
+          file: ./Dockerfile
+          push: true
+          tags: ${{ secrets.DOCKER_HUB_TAGS }}:latest
+          
+      - name: Image digest
+        run: echo ${{ steps.docker_build.outputs.digest }}
+    
     
