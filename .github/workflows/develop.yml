@@ -62,6 +62,6 @@ jobs:
          #   username: ${{ secrets.AWX_USER }}
          #   password: ${{ secrets.AWX_PASSWORD }}
             customHeaders: '{"Content-Type": "application/json"}'
-            data: '{"token": ${{ secrets.AUTOMATE_SERVER_TOKEN }} }'
+            data: ${{ secrets.AUTOMATE_SERVER_TOKEN }}
 
     
