@@ -6,14 +6,14 @@ import { AuthService } from './auth.service';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @Post('/apple/token/access')
+  @Post('/token/apple/access')
   async getNewAccessToken(@Body() body: any): Promise<object> {
     const { token } = body;
     const newAccessToken = await this.authService.getAccessToken(token);
     return newAccessToken;
   }
 
-  @Post('/apple/login')
+  @Post('/sign/apple')
   async oauthAppleSignIn(
     @Request() res: any,
     @Body() body: any
@@ -24,8 +24,8 @@ export class AuthController {
 
     return result.accessToken;
   }
-  @Delete('apple/login')
-  async oauthAppleSignOut(): Promise<boolean> {
-    return true;
+  @Delete('sign')
+  async oauthAppleSignOut(): Promise<any> {
+    return { result: true };
   }
 }
