@@ -1,19 +1,19 @@
-import { Body, Controller, Post, Get, Request, Delete } from '@nestjs/common';
+import { Body, Controller, Post, Get, Request, Delete } from "@nestjs/common";
 
-import { AuthService } from './auth.service';
+import { AuthService } from "./auth.service";
 
-@Controller('auth')
+@Controller("auth")
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @Post('/apple/token/access')
+  @Post("/apple/token/access")
   async getNewAccessToken(@Body() body: any): Promise<object> {
     const { token } = body;
     const newAccessToken = await this.authService.getAccessToken(token);
     return newAccessToken;
   }
 
-  @Post('/apple/login')
+  @Post("/apple/login")
   async oauthAppleSignIn(
     @Request() res: any,
     @Body() body: any
@@ -24,7 +24,7 @@ export class AuthController {
 
     return result.accessToken;
   }
-  @Delete('apple/login')
+  @Delete("apple/login")
   async oauthAppleSignOut(): Promise<boolean> {
     return true;
   }

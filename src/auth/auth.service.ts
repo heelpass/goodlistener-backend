@@ -1,23 +1,23 @@
-import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import axios from 'axios';
-import * as qs from 'qs';
+import { Injectable } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
+import axios from "axios";
+import * as qs from "qs";
 
 @Injectable()
 export class AuthService {
   constructor(private readonly configService: ConfigService) {}
 
   async handleAppleLogin(token: string): Promise<any> {
-    const url = 'https://appleId.apple.com/auth/token';
+    const url = "https://appleId.apple.com/auth/token";
     const httpOption = {
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
     };
 
     const body = {
-      client_id: this.configService.get<string>('APPLE_CLIENT_ID'),
-      client_secret: this.configService.get<string>('APPLE_CLIENT_SECRET'),
+      client_id: this.configService.get<string>("APPLE_CLIENT_ID"),
+      client_secret: this.configService.get<string>("APPLE_CLIENT_SECRET"),
       code: token,
-      grant_type: 'authorization_code',
+      grant_type: "authorization_code",
     };
 
     try {
@@ -31,17 +31,17 @@ export class AuthService {
   }
 
   async getAccessToken(refreshToken: string): Promise<object> {
-    const url = 'https://appleid.apple.com/auth/token';
+    const url = "https://appleid.apple.com/auth/token";
 
     const httpOption = {
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
     };
 
     const body = {
-      client_id: this.configService.get<string>('APPLE_CLIENT_ID'),
-      client_secret: this.configService.get<string>('APPLE_CLIENT_SECRET'),
+      client_id: this.configService.get<string>("APPLE_CLIENT_ID"),
+      client_secret: this.configService.get<string>("APPLE_CLIENT_SECRET"),
       refresh_token: refreshToken,
-      grant_type: 'refresh_token',
+      grant_type: "refresh_token",
     };
 
     try {
