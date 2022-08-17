@@ -6,26 +6,27 @@ import { AuthService } from "./auth.service";
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @Post("/apple/token/access")
+  // 없어질 API
+  @Post('/token/apple/access')
   async getNewAccessToken(@Body() body: any): Promise<object> {
     const { token } = body;
     const newAccessToken = await this.authService.getAccessToken(token);
     return newAccessToken;
   }
 
-  @Post("/apple/login")
-  async oauthAppleSignIn(
-    @Request() res: any,
-    @Body() body: any
-  ): Promise<string> {
+  // 회원가입
+  @Post('/sign/apple')
+  async oauthAppleSignIn(@Request() res: any, @Body() body: any): Promise<any> {
     console.log(res.user);
     const { token } = body;
     const result = await this.authService.handleAppleLogin(token);
 
-    return result.accessToken;
+    return { token: result.sendToken };
   }
-  @Delete("apple/login")
-  async oauthAppleSignOut(): Promise<boolean> {
-    return true;
+
+  //회원정보 삭제
+  @Delete('sign')
+  async oauthAppleSignOut(): Promise<any> {
+    return { result: true };
   }
 }
