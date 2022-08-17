@@ -24,7 +24,7 @@ export class AuthService {
       const response = await axios.post(url, qs.stringify(body), httpOption);
       const { refresh_token, id_token } = response.data;
       console.log(response.data);
-      return { refreshTokn: refresh_token, accessToken: id_token };
+      return { refreshToken: refresh_token, accessToken: id_token };
     } catch (err) {
       console.log(err.message);
     }
