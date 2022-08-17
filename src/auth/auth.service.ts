@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import axios from 'axios';
 import * as qs from 'qs';
@@ -6,7 +10,7 @@ import * as qs from 'qs';
 @Injectable()
 export class AuthService {
   constructor(private readonly configService: ConfigService) {}
-
+  // 회원가입 시 사용
   async handleAppleLogin(token: string): Promise<any> {
     const url = 'https://appleId.apple.com/auth/token';
     const httpOption = {
@@ -23,10 +27,16 @@ export class AuthService {
     try {
       const response = await axios.post(url, qs.stringify(body), httpOption);
       const { refresh_token, id_token } = response.data;
-      console.log(response.data);
-      return { refreshToken: refresh_token, accessToken: id_token };
+
+      if (response.data?.error === 'invalid_grant') {
+        throw new ConflictException('잘못된 토큰입니다.');
+      }
+
+      return { sendToken: refresh_token, userInfo: id_token };
     } catch (err) {
-      console.log(err.message);
+      if (err.message === undefined) {
+        throw new UnauthorizedException('잘못된 유저의 정보입니다.');
+      }
     }
   }
 
@@ -47,7 +57,7 @@ export class AuthService {
     try {
       const response = await axios.post(url, qs.stringify(body), httpOption);
       console.log(response.data);
-      const accessToken = response.data.id_token;
+      const accessToken = response.data.refresh_token;
       return { accessToken };
     } catch (err) {
       console.log(err.message);
