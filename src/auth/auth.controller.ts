@@ -16,15 +16,12 @@ export class AuthController {
 
   // 회원가입
   @Post('/sign/apple')
-  async oauthAppleSignIn(
-    @Request() res: any,
-    @Body() body: any
-  ): Promise<string> {
+  async oauthAppleSignIn(@Request() res: any, @Body() body: any): Promise<any> {
     console.log(res.user);
     const { token } = body;
     const result = await this.authService.handleAppleLogin(token);
 
-    return result.refreshToken;
+    return { token: result.sendToken };
   }
 
   //회원정보 삭제
