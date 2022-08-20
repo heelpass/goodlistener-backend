@@ -2,10 +2,10 @@ import {
   ConflictException,
   Injectable,
   UnauthorizedException,
-} from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import axios from 'axios';
-import * as qs from 'qs';
+} from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
+import axios from "axios";
+import * as qs from "qs";
 
 @Injectable()
 export class AuthService {
@@ -28,14 +28,14 @@ export class AuthService {
       const response = await axios.post(url, qs.stringify(body), httpOption);
       const { refresh_token, id_token } = response.data;
 
-      if (response.data?.error === 'invalid_grant') {
-        throw new ConflictException('잘못된 토큰입니다.');
+      if (response.data?.error === "invalid_grant") {
+        throw new ConflictException("잘못된 토큰입니다.");
       }
 
       return { sendToken: refresh_token, userInfo: id_token };
     } catch (err) {
       if (err.message === undefined) {
-        throw new UnauthorizedException('잘못된 유저의 정보입니다.');
+        throw new UnauthorizedException("잘못된 유저의 정보입니다.");
       }
     }
   }

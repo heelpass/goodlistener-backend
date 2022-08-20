@@ -8,7 +8,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
-import { UserEntity } from "./user";
+import { UserEntity } from "./user.entity";
 
 @Entity("channel")
 export class ChannelEntity {

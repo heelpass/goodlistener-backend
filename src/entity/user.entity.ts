@@ -3,7 +3,10 @@ import {
   CreateDateColumn,
   Entity,
   JoinColumn,
+  ManyToOne,
+  OneToMany,
   OneToOne,
+  PrimaryColumn,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
@@ -14,20 +17,21 @@ export class UserEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @OneToOne(() => KindEntity, {
-    cascade: true,
-  })
+  @ManyToOne(() => KindEntity, (kind) => kind.id)
   @JoinColumn()
   kind: KindEntity;
 
   @Column()
-  socialId: string;
+  snsHash: string;
+
+  @Column()
+  snsKind: string;
+
+  @Column()
+  email: string;
 
   @Column()
   nickname: string;
-
-  @Column()
-  platformType: string;
 
   @Column()
   gender: string;
@@ -37,6 +41,9 @@ export class UserEntity {
 
   @Column()
   job: string;
+
+  @Column()
+  fcmHash: string;
 
   @Column()
   @CreateDateColumn()
