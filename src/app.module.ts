@@ -1,25 +1,39 @@
 import {
+  MiddlewareConsumer,
   Module,
   NestModule,
-  MiddlewareConsumer,
   RequestMethod,
-} from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { AuthService } from './auth/auth.service';
-import { AuthController } from './auth/auth.controller';
-import { ConfigModule } from '@nestjs/config';
-import { AuthModule } from './auth/auth.module';
-import { UsersModule } from './users/users.module';
-import { AuthMiddleware } from './middleware/auth.middleware';
+} from "@nestjs/common";
+import { AppController } from "./app.controller";
+import { TypeOrmModule } from "@nestjs/typeorm";
+import { AppService } from "./app.service";
+import { AuthService } from "./auth/auth.service";
+import { AuthController } from "./auth/auth.controller";
+import { ConfigModule } from "@nestjs/config";
+import { AuthModule } from "./auth/auth.module";
+import { UserModule } from "./user/user.module";
+import { AuthMiddleware } from "./middleware/auth.middleware";
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+      envFilePath:
+        ".env." +
+        (process.env.NODE_ENV === undefined ? "local" : process.env.NODE_ENV),
+    }),
+    TypeOrmModule.forRoot({
+      type: "mariadb",
+      host: process.env.DB_HOST,
+      port: Number(process.env.DB_PORT),
+      username: process.env.DB_USERNAME,
+      password: process.env.DB_PASSWORD,
+      database: process.env.DB_NAME,
+      entities: [__dirname + "/**/entity/*{.ts,.js}"],
+      synchronize: false,
     }),
     AuthModule,
-    UsersModule,
+    UserModule,
   ],
   providers: [AppService, AuthService],
   controllers: [AppController, AuthController],
@@ -28,7 +42,12 @@ export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(AuthMiddleware)
-      .exclude({ path: '/sign/apple', method: RequestMethod.POST })
-      .forRoutes('*');
+      .exclude(
+        { path: "/sign/apple", method: RequestMethod.POST },
+        { path: "/", method: RequestMethod.GET },
+        "user/(.*)",
+        "user"
+      )
+      .forRoutes("*");
   }
 }

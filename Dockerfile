@@ -11,8 +11,8 @@ ADD . /app
 RUN yarn install --frozen-lockfile ; \
     yarn build \
 
-# 환경변수 NODE_ENV 의 값을 product 로 설정
-ENV NODE_ENV product
+# 환경변수 NODE_ENV 의 값을 prod 로 설정
+ENV NODE_ENV prod
 
 # 가상 머신에 오픈할 포트
 EXPOSE 31081
