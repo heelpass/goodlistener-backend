@@ -63,6 +63,7 @@ export class AuthService {
       return { accessToken };
     } catch (err) {
       console.log(err.message);
+      return err;
     }
   }
 

@@ -24,7 +24,6 @@ export class AuthController {
   async oauthAppleSignIn(@Request() res: any, @Body() body: any): Promise<any> {
     const { token } = body;
 
-    try {
       const appleToken = await this.authService.handleAppleLogin(token);
 
       const uuid = this.authService.verifyTokenInfo(appleToken.userInfo);
@@ -34,10 +33,6 @@ export class AuthController {
       const isExistUser = id !== undefined;
 
       return { token: appleToken.sendToken, isExistUser };
-    } catch (err) {
-      console.log(err.message);
-      throw new Error(err);
-    }
   }
 
   //회원정보 삭제
