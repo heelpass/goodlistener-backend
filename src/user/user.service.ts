@@ -2,10 +2,10 @@ import {
   Injectable,
   NotAcceptableException,
   NotFoundException,
-} from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
-import { UserEntity } from "../entity/user.entity";
+} from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { UserEntity } from '../entity/user.entity';
 
 @Injectable()
 export class UserService {
@@ -42,8 +42,17 @@ export class UserService {
       });
       return this.repo.save(user);
     } else {
-      throw new NotAcceptableException("already exist nickname = " + nickname);
+      throw new NotAcceptableException('already exist nickname = ' + nickname);
     }
+  }
+
+  async findByHash(snsHash: string) {
+    const user = await this.repo.findOne({
+      where: {
+        snsHash: snsHash,
+      },
+    });
+    return user;
   }
 
   async findOne(id: number) {
@@ -73,9 +82,9 @@ export class UserService {
   async update(id: number, attrs: Partial<UserEntity>) {
     const user = await this.findOne(id);
     if (!user) {
-      throw new NotFoundException("user not found = " + id);
+      throw new NotFoundException('user not found = ' + id);
     }
-    console.log("attrs = " + JSON.stringify(attrs));
+    console.log('attrs = ' + JSON.stringify(attrs));
     Object.assign(user, attrs);
     return this.repo.save(user);
   }
@@ -83,7 +92,7 @@ export class UserService {
   async remove(id: number) {
     const user = await this.findOne(id);
     if (!user) {
-      throw new NotFoundException("user not found = " + id);
+      throw new NotFoundException('user not found = ' + id);
     }
     return this.repo.remove(user);
   }
