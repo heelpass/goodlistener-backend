@@ -8,22 +8,25 @@ import {
   Patch,
   Post,
   Query,
-} from "@nestjs/common";
-import { CreateUserDto } from "./dto/create-user.dto";
-import { UserService } from "./user.service";
-import { SignInUserDto } from "./dto/signIn-user.dto";
-import { UpdateUserDto } from "./dto/update-user.dto";
+  Request,
+} from '@nestjs/common';
+import { CreateUserDto } from './dto/create-user.dto';
+import { UserService } from './user.service';
+import { SignInUserDto } from './dto/signIn-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { resourceLimits } from 'worker_threads';
 
-@Controller("user")
+@Controller('user')
 export class UserController {
   constructor(private userService: UserService) {}
 
-  @Post("/signup")
-  async createUser(@Body() body: CreateUserDto) {
+  @Post('/sign')
+  async createUser(@Request() res: any, @Body() body: CreateUserDto) {
+    console.log(res.user);
     const user = await this.userService.create(
-      body.snsHash,
-      body.snsKind,
-      body.email,
+      res.user,
+      body.snsKind || 'apple',
+      body.email || '',
       body.nickname,
       body.gender,
       body.ageRange,
@@ -33,38 +36,46 @@ export class UserController {
     return user;
   }
 
-  @Get("/")
-  checkNickName(@Query("nickname") nickname: string) {
-    return this.userService.checkNickName(nickname);
+  @Get('/valid')
+  async checkNickName(@Query('nickName') nickName: string): Promise<any> {
+    console.log(nickName);
+    const result = await this.userService.checkNickName(nickName);
+    return { isExist: result };
   }
 
-  @Post("/signin")
-  async signin(@Body() body: SignInUserDto) {
-    const user = await this.userService.findOne(body.id);
+  @Get('/')
+  async getUserInfo(@Request() res: any) {
+    const hash = res.user;
+    const user = await this.userService.findByHash(hash);
+    // const user = await this.userService.findOne(userId);
     return user;
   }
 
-  @Get("/:id")
-  async findUser(@Param("id") id: string) {
-    const user = await this.userService.findOne(parseInt(id));
-    if (!user) {
-      throw new NotFoundException("user not found with id = " + id);
-    }
-    return user;
+  // @Get('/:id')
+  // async findUser(@Param('id') id: string) {
+  //   const user = await this.userService.findOne(parseInt(id));
+  //   if (!user) {
+  //     throw new NotFoundException('user not found with id = ' + id);
+  //   }
+  //   return user;
+  // }
+
+  // @Get()
+  // async findAllUsers(@Query('email') email: string) {
+  //   return await this.userService.find(email);
+  // }
+
+  @Delete('/')
+  async removeUser(@Request() req: any) {
+    const hash = req.user;
+    const user = await this.userService.findByHash(hash);
+    return await this.userService.remove(user.id);
   }
 
-  @Get()
-  async findAllUsers(@Query("email") email: string) {
-    return await this.userService.find(email);
-  }
-
-  @Delete("/:id")
-  async removeUser(@Param("id") id: string) {
-    return await this.userService.remove(parseInt(id));
-  }
-
-  @Patch("/:id")
-  async updateUser(@Param("id") id: string, @Body() body: UpdateUserDto) {
-    return await this.userService.update(parseInt(id), body);
+  @Patch('/')
+  async updateUser(@Request() req: any, @Body() body: UpdateUserDto) {
+    const haah = req.user;
+    const user = await this.userService.findByHash(haah);
+    return await this.userService.update(user.id, body);
   }
 }

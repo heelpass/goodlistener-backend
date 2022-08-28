@@ -1,5 +1,5 @@
-import { IsNumber, IsOptional, IsString } from "class-validator";
-import { KindEntity } from "../../entity/kind";
+import { IsNumber, IsOptional, IsString } from 'class-validator';
+import { KindEntity } from '../../entity/kind';
 
 export class UpdateUserDto {
   @IsOptional()
