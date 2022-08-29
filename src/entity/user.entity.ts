@@ -1,3 +1,4 @@
+import { IsEnum, isEnum, isIn } from 'class-validator';
 import {
   Column,
   CreateDateColumn,
@@ -9,10 +10,10 @@ import {
   PrimaryColumn,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
-} from "typeorm";
-import { KindEntity } from "./kind";
+} from 'typeorm';
+import { KindEntity } from './kind';
 
-@Entity("user")
+@Entity('user')
 export class UserEntity {
   @PrimaryGeneratedColumn()
   id: number;
@@ -34,16 +35,25 @@ export class UserEntity {
   nickname: string;
 
   @Column()
+  @IsEnum(['mail', 'female'])
   gender: string;
 
   @Column()
+  @IsEnum(['10', '20', '30', '40'])
   ageRange: string;
 
   @Column()
+  @IsEnum(['student', 'worker', 'freelancer', 'jobseeker', 'etc'])
   job: string;
 
   @Column()
   fcmHash: string;
+
+  @Column()
+  profileImg: number;
+
+  @Column()
+  description: string;
 
   @Column()
   @CreateDateColumn()
