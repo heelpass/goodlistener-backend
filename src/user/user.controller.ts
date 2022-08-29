@@ -1,5 +1,6 @@
 import {
   Body,
+  ConflictException,
   Controller,
   Delete,
   Get,
@@ -22,7 +23,11 @@ export class UserController {
 
   @Post('/sign')
   async createUser(@Request() res: any, @Body() body: CreateUserDto) {
-    console.log(res.user);
+    const isExistUser = await this.userService.findByHash(res.user);
+    if (isExistUser !== null) {
+      throw new ConflictException('이미 존재하는 유저입니다.');
+    }
+
     const user = await this.userService.create(
       res.user,
       body.snsKind || 'apple',
@@ -31,6 +36,8 @@ export class UserController {
       body.gender,
       body.ageRange,
       body.job,
+      body.description,
+      body.profileImg,
       body.fcmHash
     );
     return user;

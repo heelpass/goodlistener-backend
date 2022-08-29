@@ -21,6 +21,8 @@ export class UserService {
     gender: string,
     ageRange: string,
     job: string,
+    description: string,
+    profileImg: number,
     fcmHash?: string
   ) {
     const findExistUser = await this.repo.findOne({
@@ -39,6 +41,8 @@ export class UserService {
         ageRange,
         job,
         fcmHash,
+        description,
+        profileImg,
       });
       return this.repo.save(user);
     } else {
