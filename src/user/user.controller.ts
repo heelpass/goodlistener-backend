@@ -47,6 +47,9 @@ export class UserController {
   async getUserInfo(@Request() res: any) {
     const hash = res.user;
     const user = await this.userService.findByHash(hash);
+    if (user === null) {
+      throw new NotFoundException('존재하지 않는 유저입니다.');
+    }
     // const user = await this.userService.findOne(userId);
     return user;
   }
@@ -69,6 +72,9 @@ export class UserController {
   async removeUser(@Request() req: any) {
     const hash = req.user;
     const user = await this.userService.findByHash(hash);
+    if (user === null) {
+      throw new NotFoundException('존재하지 않는 유저입니다.');
+    }
     return await this.userService.remove(user.id);
   }
 
