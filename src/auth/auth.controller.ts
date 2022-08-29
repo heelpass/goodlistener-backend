@@ -28,9 +28,9 @@ export class AuthController {
 
       const uuid = this.authService.verifyTokenInfo(appleToken.userInfo);
 
-      const id = await this.userService.findByHash(uuid);
+    const user = await this.userService.findByHash(uuid);
 
-      const isExistUser = id !== undefined;
+    const isExistUser = user !== null;
 
       return { token: appleToken.sendToken, isExistUser };
   }
