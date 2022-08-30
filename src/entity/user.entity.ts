@@ -1,17 +1,14 @@
-import { IsEnum, isEnum, isIn } from 'class-validator';
+import {IsEnum} from 'class-validator';
 import {
   Column,
   CreateDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
-  OneToMany,
-  OneToOne,
-  PrimaryColumn,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { KindEntity } from './kind';
+import {KindEntity} from './kind';
 
 @Entity('user')
 export class UserEntity {
@@ -54,6 +51,10 @@ export class UserEntity {
 
   @Column()
   description: string;
+
+  @Column()
+  @IsEnum([1, 2, 3, 4, 5, 6, 7, 8, 9])
+  wantImg: number;
 
   @Column()
   @CreateDateColumn()
