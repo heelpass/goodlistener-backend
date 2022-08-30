@@ -3,17 +3,24 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
-  JoinColumn,
+  JoinColumn, OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
 import { UserEntity } from "./user.entity";
+import {IsString} from "class-validator";
+import {ReviewEntity} from "./review";
 
 @Entity("channel")
 export class ChannelEntity {
-  @PrimaryGeneratedColumn("uuid")
-  id: string;
+  @PrimaryGeneratedColumn()
+  @OneToMany(() => ReviewEntity, (review) => review.channel)
+  id: number;
+
+  @Column()
+  @IsString()
+  channel: string;
 
   @OneToOne(() => UserEntity)
   @JoinColumn({ name: "speakerId" })

@@ -7,10 +7,12 @@ import {
   UpdateDateColumn,
 } from "typeorm";
 import { UserEntity } from "./user.entity";
+import {IsEnum} from "class-validator";
 
 @Entity("kind")
 export class KindEntity {
   @PrimaryColumn()
+  @IsEnum([ 1, 2 ])
   @OneToMany(() => UserEntity, (user) => user.kind)
   id: number;
 
