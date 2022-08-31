@@ -1,4 +1,4 @@
-import { IsEmail, IsEnum, isIn, IsNumber, IsString } from 'class-validator';
+import {IsEmail, IsEnum, isIn, IsNumber, IsOptional, IsString} from 'class-validator';
 
 export class CreateUserDto {
   @IsString()
@@ -28,6 +28,11 @@ export class CreateUserDto {
   @IsNumber()
   @IsEnum([0, 1, 2, 3, 4, 5, 6, 7, 8])
   profileImg: number;
+
+  @IsNumber()
+  @IsOptional()
+  @IsEnum([0, 1, 2, 3, 4, 5, 6, 7, 8])
+  wantImg: number;
 
   @IsString()
   description: string;
