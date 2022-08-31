@@ -22,6 +22,10 @@ export class ChannelEntity {
   @IsString()
   channel: string;
 
+  @Column({length: 100})
+  @IsString()
+  applyDesc: string;
+
   @OneToOne(() => UserEntity)
   @JoinColumn({ name: "speakerId" })
   speaker: UserEntity;
