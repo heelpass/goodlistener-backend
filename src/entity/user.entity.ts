@@ -52,7 +52,10 @@ export class UserEntity {
   @Column()
   description: string;
 
-  @Column()
+  @Column({
+    type: String,
+    unique: true,
+    nullable: true,})
   @IsEnum([1, 2, 3, 4, 5, 6, 7, 8, 9])
   wantImg: number;
 
