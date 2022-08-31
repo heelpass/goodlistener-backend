@@ -1,20 +1,11 @@
-import {
-  MiddlewareConsumer,
-  Module,
-  NestModule,
-  RequestMethod,
-} from '@nestjs/common';
-import { AppController } from './app.controller';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { AppService } from './app.service';
-import { AuthService } from './auth/auth.service';
-import { AuthController } from './auth/auth.controller';
-import { ConfigModule } from '@nestjs/config';
-import { AuthModule } from './auth/auth.module';
-import { UserModule } from './user/user.module';
-import { AuthMiddleware } from './middleware/auth.middleware';
-import { UserService } from './user/user.service';
-import { UserController } from './user/user.controller';
+import {MiddlewareConsumer, Module, NestModule, RequestMethod,} from '@nestjs/common';
+import {TypeOrmModule} from '@nestjs/typeorm';
+import {ConfigModule} from '@nestjs/config';
+import {AuthModule} from './auth/auth.module';
+import {UserModule} from './user/user.module';
+import {AuthMiddleware} from './middleware/auth.middleware';
+import {EventModule} from './event/event.module';
+import { MatchModule } from './match/match.module';
 
 @Module({
   imports: [
@@ -32,10 +23,12 @@ import { UserController } from './user/user.controller';
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
       entities: [__dirname + "/**/entity/*{.ts,.js}"],
-      synchronize: false,
+      synchronize: true,
     }),
     AuthModule,
     UserModule,
+    EventModule,
+    MatchModule,
   ],
   // providers: [AppService, AuthService, UserService],
   // controllers: [AppController, AuthController, UserController],
