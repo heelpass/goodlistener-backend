@@ -23,7 +23,7 @@ import {AuthMiddleware} from './middleware/auth.middleware';
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
       entities: [__dirname + "/**/entity/*{.ts,.js}"],
-      synchronize: true,
+      synchronize: false,
     }),
     AuthModule,
     UserModule,
