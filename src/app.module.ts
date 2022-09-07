@@ -5,7 +5,7 @@ import {AuthModule} from './auth/auth.module';
 import {UserModule} from './user/user.module';
 import {AuthMiddleware} from './middleware/auth.middleware';
 // import {EventModule} from './event/event.module';
-// import { MatchModule } from './match/match.module';
+import { MatchModule } from './match/match.module';
 
 @Module({
   imports: [
@@ -23,12 +23,13 @@ import {AuthMiddleware} from './middleware/auth.middleware';
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
       entities: [__dirname + "/**/entity/*{.ts,.js}"],
-      synchronize: false,
+      synchronize: true,
+      // logging: true
     }),
     AuthModule,
     UserModule,
     // EventModule,
-    // MatchModule,
+    MatchModule,
   ],
   // providers: [AppService, AuthService, UserService],
   // controllers: [AppController, AuthController, UserController],
@@ -39,7 +40,8 @@ export class AppModule implements NestModule {
       .apply(AuthMiddleware)
       .exclude(
         { path: '/auth/sign/apple', method: RequestMethod.POST },
-        { path: '/user/valid', method: RequestMethod.GET }
+        { path: '/user/valid', method: RequestMethod.GET },
+        // { path: '/match/(.*)', method: RequestMethod.POST }
         //   'user/(.*)',
         //   'user'
       )

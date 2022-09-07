@@ -1,12 +1,5 @@
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  OneToMany,
-  PrimaryColumn,
-  UpdateDateColumn,
-} from "typeorm";
-import { UserEntity } from "./user.entity";
+import {Column, CreateDateColumn, Entity, OneToMany, PrimaryColumn, UpdateDateColumn,} from "typeorm";
+import {UserEntity} from "./user.entity";
 import {IsEnum} from "class-validator";
 
 @Entity("kind")
