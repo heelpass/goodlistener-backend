@@ -1,19 +1,27 @@
 import {
+  BeforeInsert,
   Column,
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
-  JoinColumn, OneToMany,
-  OneToOne,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
-import { UserEntity } from "./user.entity";
+import {UserEntity} from "./user.entity";
 import {IsString} from "class-validator";
 import {ReviewEntity} from "./review";
 
 @Entity("channel")
 export class ChannelEntity {
+  @BeforeInsert()
+  beforeInsertActions() {
+    this.isSpeakerIn = false;
+    this.isListenerIn = false;
+  }
+
   @PrimaryGeneratedColumn()
   @OneToMany(() => ReviewEntity, (review) => review.channel)
   id: number;
@@ -26,27 +34,30 @@ export class ChannelEntity {
   @IsString()
   applyDesc: string;
 
-  @OneToOne(() => UserEntity)
+  @ManyToOne(() => UserEntity)
   @JoinColumn({ name: "speakerId" })
   speaker: UserEntity;
 
-  @OneToOne(() => UserEntity)
+  @ManyToOne(() => UserEntity)
   @JoinColumn({ name: "listenerId" })
   listener: UserEntity;
 
-  @Column()
+  @Column({ nullable: false, select: false})
   isSpeakerIn: boolean;
 
-  @Column()
+  @Column({ nullable: false, select: false})
   isListenerIn: boolean;
+
+  @Column({ nullable: false, select: false, default: false})
+  isStartDate: boolean;
 
   @Column()
   meetingTime: Date;
 
-  @Column()
+  @Column({ nullable: true})
   startTime: Date;
 
-  @Column()
+  @Column({nullable: true})
   endTime: Date;
 
   @Column()
