@@ -2,10 +2,11 @@ import {format, parseISO} from "date-fns";
 
 const convertUnixTimeStamp = (inputDate: Date): number => {
   return parseInt((new Date(inputDate).getTime() / 1000).toFixed(0));
+  // return new Date(inputDate).getTime();
 }
 
-const convertDateTime = (inputDate: number): String => {
-  return format(parseISO(new Date(inputDate * 1000).toLocaleString()), 'yyyy-MM-dd HH:mm:ss');
+const convertDateTime = (inputDate: Date): String => {
+  return format(new Date(inputDate), 'yyyy-MM-dd HH:mm');
 }
 
 const convertFitNotInQuery = (inputDate: Date): String => {

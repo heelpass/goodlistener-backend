@@ -5,7 +5,7 @@ import {Repository} from "typeorm";
 import {ChannelEntity} from "../entity/channel";
 import {addDays, format, parseISO} from 'date-fns';
 import {randomUUID} from "crypto";
-import {convertFitNotInQuery} from "../helper/convertDate";
+import {convertDateTime, convertFitNotInQuery, convertUnixTimeStamp} from "../helper/convertDate";
 
 @Injectable()
 export class MatchService {
@@ -15,37 +15,12 @@ export class MatchService {
   ) {
   }
 
-  async getUserMeetingTime(userId: number) {
-    let meetingTimes: Date[] = [];
-    console.log("userId = " + userId);
-    // sql 로 들어오는 날짜의 시간에 일주일을 더한 값 사이에 channel의 MeetingTime이 포함 안되는 유저들을 뽑는다.
-    const channelRows = this.channelRepo.createQueryBuilder('c')
-      .innerJoin(UserEntity, 'u', 'u.id = c.listenerId')
-      .where('c.listenerId = :id', {id: 234})
-      .getMany();
-    console.log("channelRows =  " + JSON.stringify(channelRows));
-
-    if (Object.keys(channelRows).length !== 0) {
-      channelRows.then(channel => {
-        channel.forEach(row => {
-          meetingTimes.push(row.meetingTime);
-        })
-      }).finally(() => {
-        return meetingTimes;
-      })
-    } else {
-      return meetingTimes;
-    }
-  }
-
   async matchListener(matchDate: Date) {
     // sql 로 들어오는 날짜의 시간에 일주일을 더한 값 사이에 channel의 MeetingTime이 포함 안되는 유저들을 뽑는다.
-    console.log("convertFitNotInQuery(matchDate) = " + convertFitNotInQuery(matchDate));
     return this.userRepo.createQueryBuilder('u')
-      .distinct(true)
-      .leftJoin(ChannelEntity, 'c', `u.id = c.listenerId and UNIX_TIMESTAMP(c.meetingTime) not in (${convertFitNotInQuery(matchDate)})`)
+      .where(`u.id not in (select distinct c.listenerId from channel c
+             where UNIX_TIMESTAMP(c.meetingTime) in (${convertFitNotInQuery(matchDate)}))`)
       .andWhere('u.kindId = 1')
-      .andWhere('c.deletedAt is null')
       .getMany();
   }
 
@@ -55,7 +30,7 @@ export class MatchService {
   }
 
   async insertChannel(speakerId: number, listenerId: number, meetingTime: Date, applyDesc: string) {
-    let responseChannel:ChannelEntity;
+    let responseChannel: ChannelEntity;
     const speaker = this.userRepo.findOne({
       where: {
         id: speakerId,
@@ -77,7 +52,7 @@ export class MatchService {
       channelEntity.isStartDate = (i === 0);
 
       const channel = this.channelRepo.create(channelEntity);
-      if(i === 0) {
+      if (i === 0) {
         responseChannel = await this.channelRepo.save(channel);
       } else {
         await this.channelRepo.save(channel);
@@ -89,38 +64,48 @@ export class MatchService {
 
   async getMyListener(userId: number) {
     const channel = this.channelRepo.findOne({
-      relations: { speaker: true },
-      where: { speaker: { id: userId }, deletedAt: null, isStartDate: true}
+      relations: {speaker: true, listener: true},
+      where: {speaker: {id: userId}, deletedAt: null, isStartDate: true}
     });
     const channelEntity = await channel;
+    const convertKrDate = new Date(channelEntity.meetingTime).getTime() + 32400;
+    const meetingTime = convertDateTime(new Date(convertKrDate));
     const listener = this.userRepo.findOne({
-      where: { id : channelEntity.listener.id }
+      where: {id: channelEntity.listener.id}
     });
     const listenerEntity = await listener;
-    return {
-      nickname: listenerEntity.nickname,
-      description: listenerEntity.description,
-      meetingTime: channelEntity.meetingTime
-    };
+    if(listenerEntity) {
+      return {
+        nickname: listenerEntity.nickname,
+        description: listenerEntity.description,
+        meetingTime: meetingTime
+      };
+    } else {
+      return null;
+    }
   }
 
-  // async getMySpeaker(userId: number) {
-  //   const channel = this.channelRepo.find({
-  //     relations: { listener: true },
-  //     where: { listener: { id: userId }, deletedAt: null, isStartDate: true}
-  //   });
-  //   const channelEntity = await channel;
-  //   for (const channel of channelEntity) {
-  //     const speaker = this.userRepo.findOne({
-  //       where: { id : channel.speaker.id }
-  //     });
-  //     const speakerEntity = await speaker;
-  //   }
-  //   const speakerEntity = await speaker;
-  //   return {
-  //     nickname: listenerEntity.nickname,
-  //     description: listenerEntity.description,
-  //     meetingTime: channelEntity.meetingTime
-  //   };
-  // }
+  async getMySpeaker(userId: number) {
+    let mySpeakers = [];
+    const channel = this.channelRepo.find({
+      relations: {listener: true, speaker: true},
+      where: {listener: {id: userId}, deletedAt: null, isStartDate: true}
+    });
+    const channelEntity = await channel;
+    for (const channel of channelEntity) {
+      const speaker = this.userRepo.findOne({
+        where: {id: channel.speaker.id}
+      });
+      const speakerEntity = await speaker;
+      const convertKrDate = new Date(channel.meetingTime).getTime() + 32400;
+      const meetingTime = convertDateTime(new Date(convertKrDate));
+      mySpeakers.push(
+        {
+          nickname: speakerEntity.nickname,
+          description: speakerEntity.description,
+          meetingTime: meetingTime
+        })
+    }
+    return mySpeakers;
+  }
 }
