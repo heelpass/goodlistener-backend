@@ -11,6 +11,6 @@ export class applyMatchDto {
   @IsString()
   applyDesc: string;
 
-  @IsDate({ message: '$property must be a Date type' })
-  matchDate: Date;
+  @IsDate({ message: '$property must be a Date type Array' })
+  matchDate: Date[];
 }
