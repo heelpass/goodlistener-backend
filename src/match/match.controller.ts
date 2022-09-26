@@ -46,7 +46,7 @@ export class MatchController {
         );
       }
     }
-    return '매칭된 유저가 없습니다';
+    throw new NotFoundException('매칭된 유저가 없습니다');
   }
 
   @Get('/user/listener')
