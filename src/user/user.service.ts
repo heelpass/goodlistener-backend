@@ -55,6 +55,7 @@ export class UserService {
       where: {
         snsHash: snsHash,
       },
+      relations: ['kind']
     });
     return user;
   }
@@ -67,6 +68,7 @@ export class UserService {
       where: {
         id: id,
       },
+      relations: ['kind']
     });
   }
 

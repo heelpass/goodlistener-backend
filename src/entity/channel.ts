@@ -42,13 +42,13 @@ export class ChannelEntity {
   @JoinColumn({ name: "listenerId" })
   listener: UserEntity;
 
-  @Column({ nullable: false, select: false})
+  @Column({ nullable: false})
   isSpeakerIn: boolean;
 
-  @Column({ nullable: false, select: false})
+  @Column({ nullable: false})
   isListenerIn: boolean;
 
-  @Column({ nullable: false, select: false, default: false})
+  @Column({ nullable: false, default: false})
   isStartDate: boolean;
 
   @Column()

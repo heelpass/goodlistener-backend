@@ -4,8 +4,8 @@ import {ConfigModule} from '@nestjs/config';
 import {AuthModule} from './auth/auth.module';
 import {UserModule} from './user/user.module';
 import {AuthMiddleware} from './middleware/auth.middleware';
-// import {EventModule} from './event/event.module';
-import { MatchModule } from './match/match.module';
+import {MatchModule} from './match/match.module';
+import {ChatModule} from './chat/chat.module';
 
 @Module({
   imports: [
@@ -23,13 +23,13 @@ import { MatchModule } from './match/match.module';
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
       entities: [__dirname + "/**/entity/*{.ts,.js}"],
-      synchronize: false,
-      // logging: true
+      synchronize: true,
+      logging: false
     }),
     AuthModule,
     UserModule,
-    // EventModule,
     MatchModule,
+    ChatModule,
   ],
   // providers: [AppService, AuthService, UserService],
   // controllers: [AppController, AuthController, UserController],

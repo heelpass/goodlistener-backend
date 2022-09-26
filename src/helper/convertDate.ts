@@ -9,9 +9,15 @@ const convertDateTime = (inputDate: Date): String => {
   return format(new Date(inputDate), 'yyyy-MM-dd HH:mm');
 }
 
+const convertStringToDate = (inputDate: string) => {
+  const today = new Date(inputDate);
+  today.setHours(today.getHours() + 9);
+  return today.toISOString().replace('T', ' ').substring(0, 19);
+}
+
 const convertFitNotInQuery = (inputDate: Date): String => {
   let oneWeekArr = [];
-  for(let i=0; i<7;i++) {
+  for (let i = 0; i < 7; i++) {
     oneWeekArr.push(convertUnixTimeStamp(inputDate) + (86400 * (i)));
   }
   return oneWeekArr.join();
@@ -20,5 +26,6 @@ const convertFitNotInQuery = (inputDate: Date): String => {
 export {
   convertUnixTimeStamp,
   convertDateTime,
-  convertFitNotInQuery
+  convertFitNotInQuery,
+  convertStringToDate
 }
