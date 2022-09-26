@@ -110,16 +110,20 @@ export class MatchService {
 
   async getMySpeaker(userId: number) {
     let mySpeakers = [];
-    const channel = this.channelRepo.find({
+    const channelEntity = await this.channelRepo.find({
       relations: { listener: true, speaker: true },
       where: { listener: { id: userId }, deletedAt: null, isStartDate: true },
     });
-    const channelEntity = await channel;
+
+    if (channelEntity === null) {
+      throw new NotFoundException('당신의 스피커가 없습니다');
+    }
+
     for (const channel of channelEntity) {
-      const speaker = this.userRepo.findOne({
+      const speakerEntity = await this.userRepo.findOne({
         where: { id: channel.speaker.id },
       });
-      const speakerEntity = await speaker;
+
       const convertKrDate = new Date(channel.meetingTime).getTime() + 32400;
       const meetingTime = convertDateTime(new Date(convertKrDate));
       mySpeakers.push({
