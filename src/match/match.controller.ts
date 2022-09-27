@@ -6,7 +6,7 @@ import {
   Post,
   Query,
   Request,
-  NotFoundException,
+  NotFoundException, UnauthorizedException,
 } from '@nestjs/common';
 import { MatchService } from './match.service';
 import { applyMatchDto } from './dto/apply-match.dto';
@@ -25,6 +25,7 @@ export class MatchController {
     const userHash = res.user;
 
     const user = await this.userService.findByHash(userHash);
+    if(user.kind.id !== 1) {
     let matchedUser: UserEntity;
     for (let i = 0; i < body.matchDate.length; i++) {
       const possibleUsers = await this.matchService.matchListener(
@@ -46,6 +47,9 @@ export class MatchController {
         );
       }
     }
+    } else {
+      throw new UnauthorizedException('권한이 없는 사용자입니다');
+    }
     throw new NotFoundException('매칭된 유저가 없습니다');
   }
 
@@ -54,7 +58,7 @@ export class MatchController {
     const userHash = res.user;
 
     const user = await this.userService.findByHash(userHash);
-
+    if(user.kind.id !== 0) {
     const myListener = await this.matchService.getMyListener(user.id);
 
     if (myListener === null || myListener === undefined) {
@@ -62,6 +66,10 @@ export class MatchController {
     }
 
     return myListener;
+    } else {
+      throw new UnauthorizedException('권한이 없는 사용자입니다');
+    }
+
   }
 
   @Get('/user/speaker')
@@ -70,6 +78,7 @@ export class MatchController {
 
     const user = await this.userService.findByHash(userHash);
 
+    if(user.kind.id !== 0) {
     const mySpeakers = await this.matchService.getMySpeaker(user.id);
 
     if (mySpeakers.length <= 0) {
@@ -77,5 +86,8 @@ export class MatchController {
     }
 
     return mySpeakers;
+    } else {
+      throw new UnauthorizedException('권한이 없는 사용자입니다');
+    }
   }
 }
