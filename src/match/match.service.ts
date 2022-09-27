@@ -99,6 +99,9 @@ export class MatchService {
     const listenerEntity = await listener;
     if (listenerEntity) {
       return {
+        channel: channelEntity.channel,
+        speakerId: Number(userId),
+        listenerId: Number(listenerEntity.id),
         nickname: listenerEntity.nickname,
         description: listenerEntity.description,
         meetingTime: meetingTime,
@@ -126,11 +129,15 @@ export class MatchService {
 
       const convertKrDate = new Date(channel.meetingTime).getTime() + 32400;
       const meetingTime = convertDateTime(new Date(convertKrDate));
-      mySpeakers.push({
-        nickname: speakerEntity.nickname,
-        description: speakerEntity.description,
-        meetingTime: meetingTime,
-      });
+      mySpeakers.push(
+        {
+          channel: channel.channel,
+          listenerId: Number(userId),
+          speakerId: Number(speakerEntity.id),
+          nickname: speakerEntity.nickname,
+          description: speakerEntity.description,
+          meetingTime: meetingTime
+        })
     }
     return mySpeakers;
   }
