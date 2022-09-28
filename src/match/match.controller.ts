@@ -25,7 +25,7 @@ export class MatchController {
     const userHash = res.user;
 
     const user = await this.userService.findByHash(userHash);
-    if(user.kind.id !== 1) {
+    if(user.kind.id === 0) {
     let matchedUser: UserEntity;
     for (let i = 0; i < body.matchDate.length; i++) {
       const possibleUsers = await this.matchService.matchListener(
