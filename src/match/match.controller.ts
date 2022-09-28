@@ -58,7 +58,7 @@ export class MatchController {
     const userHash = res.user;
 
     const user = await this.userService.findByHash(userHash);
-    if(user.kind.id !== 0) {
+    if(user.kind.id === 0) {
     const myListener = await this.matchService.getMyListener(user.id);
 
     if (myListener === null || myListener === undefined) {
@@ -78,7 +78,7 @@ export class MatchController {
 
     const user = await this.userService.findByHash(userHash);
 
-    if(user.kind.id !== 0) {
+    if(user.kind.id === 1) {
     const mySpeakers = await this.matchService.getMySpeaker(user.id);
 
     if (mySpeakers.length <= 0) {
