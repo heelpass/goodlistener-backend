@@ -1,10 +1,10 @@
-import {NotFoundException, Injectable} from '@nestjs/common';
-import {InjectRepository} from '@nestjs/typeorm';
-import {UserEntity} from '../entity/user.entity';
-import {Repository} from 'typeorm';
-import {ChannelEntity} from '../entity/channel';
-import {addDays, format, parseISO} from 'date-fns';
-import {randomUUID} from 'crypto';
+import { NotFoundException, Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { UserEntity } from '../entity/user.entity';
+import { Repository } from 'typeorm';
+import { ChannelEntity } from '../entity/channel';
+import { addDays, format, parseISO } from 'date-fns';
+import { randomUUID } from 'crypto';
 import {
   convertDateTime,
   convertFitNotInQuery,
@@ -17,8 +17,7 @@ export class MatchService {
     @InjectRepository(UserEntity) private userRepo: Repository<UserEntity>,
     @InjectRepository(ChannelEntity)
     private channelRepo: Repository<ChannelEntity>
-  ) {
-  }
+  ) {}
 
   async matchListener(matchDate: Date) {
     // sql 로 들어오는 날짜의 시간에 일주일을 더한 값 사이에 channel의 MeetingTime이 포함 안되는 유저들을 뽑는다.
@@ -27,8 +26,8 @@ export class MatchService {
       .where(
         `u.id not in (select distinct c.listenerId from channel c
              where UNIX_TIMESTAMP(c.meetingTime) in (${convertFitNotInQuery(
-          matchDate
-        )}))`
+               matchDate
+             )}))`
       )
       .andWhere('u.kindId = 1')
       .getMany();
@@ -84,8 +83,8 @@ export class MatchService {
 
   async getMyListener(userId: number) {
     const channelEntity = await this.channelRepo.findOne({
-      relations: {speaker: true, listener: true},
-      where: {speaker: {id: userId}, deletedAt: null, isStartDate: true},
+      relations: { speaker: true, listener: true },
+      where: { speaker: { id: userId }, deletedAt: null, isStartDate: true },
     });
 
     if (channelEntity === null) {
@@ -95,14 +94,21 @@ export class MatchService {
     const convertKrDate = new Date(channelEntity.meetingTime).getTime() + 32400;
     const meetingTime = convertDateTime(new Date(convertKrDate));
     const listener = this.userRepo.findOne({
-      where: {id: channelEntity.listener.id},
+      where: { id: channelEntity.listener.id },
     });
     const listenerEntity = await listener;
     if (listenerEntity) {
       return {
         channel: channelEntity.channel,
         speakerId: Number(userId),
-        listenerId: Number(listenerEntity.id),
+        listener: {
+          id: Number(listenerEntity.id),
+          nickName: listenerEntity.nickname,
+          gender: listenerEntity.gender,
+          ageRange: listenerEntity.ageRange,
+          job: listenerEntity.job,
+          description: listenerEntity.description,
+        },
         nickname: listenerEntity.nickname,
         description: listenerEntity.description,
         meetingTime: meetingTime,
@@ -115,8 +121,8 @@ export class MatchService {
   async getMySpeaker(userId: number) {
     let mySpeakers = [];
     const channelEntity = await this.channelRepo.find({
-      relations: {listener: true, speaker: true},
-      where: {listener: {id: userId}, deletedAt: null, isStartDate: true},
+      relations: { listener: true, speaker: true },
+      where: { listener: { id: userId }, deletedAt: null, isStartDate: true },
     });
 
     if (channelEntity === null) {
@@ -125,33 +131,42 @@ export class MatchService {
 
     for (const channel of channelEntity) {
       const speakerEntity = await this.userRepo.findOne({
-        where: {id: channel.speaker.id},
+        where: { id: channel.speaker.id },
       });
 
       const convertKrDate = new Date(channel.meetingTime).getTime() + 32400;
       const meetingTime = convertDateTime(new Date(convertKrDate));
-      mySpeakers.push(
-        {
-          channel: channel.channel,
-          listenerId: Number(userId),
-          speakerId: Number(speakerEntity.id),
-          nickname: speakerEntity.nickname,
+      mySpeakers.push({
+        channel: channel.channel,
+        listenerId: Number(userId),
+        speaker: {
+          id: Number(speakerEntity.id),
+          nickName: speakerEntity.nickname,
+          gender: speakerEntity.gender,
+          ageRange: speakerEntity.ageRange,
+          job: speakerEntity.job,
           description: speakerEntity.description,
-          meetingTime: meetingTime
-        })
+        },
+        nickname: speakerEntity.nickname,
+        description: speakerEntity.description,
+        meetingTime: meetingTime,
+      });
     }
     return mySpeakers;
   }
 
   async getMyChannel(userId: number, kindId: number) {
-    const whereClause = (kindId === 0 ? {speaker: {id: userId}, deletedAt: null} : {
-      listener: {id: userId},
-      deletedAt: null
-    });
+    const whereClause =
+      kindId === 0
+        ? { speaker: { id: userId }, deletedAt: null }
+        : {
+            listener: { id: userId },
+            deletedAt: null,
+          };
     const channelEntity = await this.channelRepo.find({
-      relations: {listener: true, speaker: true},
+      relations: { listener: true, speaker: true },
       where: whereClause,
-      order: {meetingTime: "asc"}
+      order: { meetingTime: 'asc' },
     });
 
     if (channelEntity === null) {
@@ -162,14 +177,15 @@ export class MatchService {
   }
 
   async updateChannelDeletedAt(channelId: number) {
-    if(channelId) {
-      await this.channelRepo.createQueryBuilder()
+    if (channelId) {
+      await this.channelRepo
+        .createQueryBuilder()
         .update()
-        .where("id = :id", {id: channelId})
-        .set({ deletedAt: new Date()})
+        .where('id = :id', { id: channelId })
+        .set({ deletedAt: new Date() })
         .execute();
     } else {
-      throw new NotFoundException(`삭제할 채널 ID(${channelId})가 아닙니다.`)
+      throw new NotFoundException(`삭제할 채널 ID(${channelId})가 아닙니다.`);
     }
   }
 }
