@@ -108,7 +108,7 @@ export class MatchService {
           ageRange: listenerEntity.ageRange,
           job: listenerEntity.job,
           description: listenerEntity.description,
-          wantImg: listenerEntity.wantImg
+          profileImg: listenerEntity.profileImg
         },
         nickname: listenerEntity.nickname,
         description: listenerEntity.description,
@@ -147,7 +147,7 @@ export class MatchService {
           ageRange: speakerEntity.ageRange,
           job: speakerEntity.job,
           description: speakerEntity.description,
-          wantImg: speakerEntity.wantImg
+          profileImg: speakerEntity.profileImg
         },
         nickname: speakerEntity.nickname,
         description: speakerEntity.description,
