@@ -66,6 +66,13 @@ export class ChatGateway
 
     const message = user.kind.id === 1 ? `userId : ${(userId)}번이  방 ${data.channel}를 만들었습니다` : `userId : ${(userId)}번이  접속했습니다.`;
     console.log(message);
+    const returnMessage = {
+      nickname: user.nickname,
+      id: userId,
+      room: data.channel,
+      message: message
+    };
+    client.emit('setUserIn', returnMessage);
     return {
       nickname: user.nickname,
       id: userId,
@@ -77,7 +84,8 @@ export class ChatGateway
   //종료시
   @SubscribeMessage('disconnected')
   disconnectedUser(client: Socket): void {
-    this.chatRoomService.exitChatRoom(client, client.data.room);
+    // this.chatRoomService.exitChatRoom(client, client.data.room);
+    client.emit('disconnected', this.chatRoomService.exitChatRoom(client, client.data.room));
     client.disconnect(true);
   }
 
@@ -90,12 +98,14 @@ export class ChatGateway
   //채팅방 생성하기
   @SubscribeMessage('createChatRoom')
   createChatRoom(client: Socket) {
-    return this.chatRoomService.createChatRoom(client);
+    client.emit('createChatRoom', this.chatRoomService.createChatRoom(client));
+    // return this.chatRoomService.createChatRoom(client);
   }
 
   //채팅방 들어가기
   @SubscribeMessage('enterChatRoom')
   enterChatRoom(client: Socket, payload: any) {
+    client.emit('enterChatRoom', this.chatRoomService.enterChatRoom(client));
     return this.chatRoomService.enterChatRoom(client);
   }
 
@@ -106,7 +116,7 @@ export class ChatGateway
     const {room} = client.data;
     const token = await this.chatRoomService.sendAgoraWebToken(AGORA_APP_ID, AGORA_APP_CERTIFICATE, true, room);
     console.log("token = " + token)
+    client.emit('createAgoraToken', token);
     return token;
-    // return client.emit('createAgoraToken', token);
   }
 }

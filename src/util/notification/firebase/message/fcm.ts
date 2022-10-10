@@ -1,12 +1,12 @@
 import * as admin from 'firebase-admin';
-import * as serviceAccount from '../../../../../firebase_key.json';
+// import * as serviceAccount from '../../../../../firebase_key.json';
 
 export class FcmManager {
-  init() {
-    admin.initializeApp({
-      credential: admin.credential.cert(serviceAccount as admin.ServiceAccount),
-    });
-  }
+  // init() {
+  //   admin.initializeApp({
+  //     // credential: admin.credential.cert(serviceAccount as admin.ServiceAccount),
+  //   });
+  // }
 
   async pushMessage(message: any) {
     const userToken = 'ㅁㅁ';
@@ -34,10 +34,10 @@ export class FcmManager {
       token: userToken,
     };
 
-    admin
-      .messaging()
-      .send(payload, false)
-      .then((res) => console.log('success' + res))
-      .catch((err) => console.log(err));
+    // admin
+    //   .messaging()
+    //   .send(payload, false)
+    //   .then((res) => console.log('success' + res))
+    //   .catch((err) => console.log(err));
   }
 }

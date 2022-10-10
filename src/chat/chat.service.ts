@@ -64,11 +64,16 @@ export class ChatService {
     delete this.chatRoomList[listenerId];
     console.log("this.chatRoomList[listenerId] = " + JSON.stringify(this.chatRoomList));
     console.log(`userId가 ${userId}인 님이 방 ${room}을 나갔습니다.`)
-    client.to(roomId).emit('getMessage', {
+    return {
       id: userId,
       nickname: nickname,
       message: `userId가 ${userId}인 님이 방 ${room}을 나갔습니다.`,
-    });
+    };
+    // client.to(roomId).emit('getMessage', {
+    //   id: userId,
+    //   nickname: nickname,
+    //   message: `userId가 ${userId}인 님이 방 ${room}을 나갔습니다.`,
+    // });
   }
 
   getChatRoom(listenerId: number, speakerId:number): chatRoomListDTO {
