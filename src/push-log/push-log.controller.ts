@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from 'src/entity/user.entity';
 import { UserService } from 'src/user/user.service';
 import { Repository } from 'typeorm';
+import { ReadPushDto } from './dto/ReadPushDto';
 import { PushLogService } from './push-log.service';
 
 @Controller('log/push')
@@ -14,9 +15,15 @@ export class PushLogController {
   ) {}
 
   @Post('/')
-  async readPush(@Request() req, @Body() messageHash) {
+  async readPush(@Request() req, @Body() readPush: ReadPushDto) {
     const user = await this.userService.findByHash(req.user);
-    await this.pushLogService.readPush(user.fcmHash, messageHash);
+    await this.pushLogService.readPush(user.fcmHash, readPush.messageHash);
     return true;
+  }
+
+  @Get('/')
+  async notReadPush(@Request() req) {
+    const user = await this.userService.findByHash(req.user);
+    return await this.pushLogService.notReadPush(user.fcmHash);
   }
 }
