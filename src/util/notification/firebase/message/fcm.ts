@@ -1,5 +1,5 @@
 import * as admin from 'firebase-admin';
-
+import { randomUUID } from 'crypto';
 export class Fcm {
   init() {
     admin.initializeApp({
@@ -34,6 +34,7 @@ export class Fcm {
       },
       data: {
         flag: flag || 'call', //'CALL_NOTIFICATION',
+        hash: randomUUID(),
       },
       apns: {
         payload: {
