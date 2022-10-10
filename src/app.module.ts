@@ -31,11 +31,13 @@ import {ChatModule} from './chat/chat.module';
     MatchModule,
     ChatModule,
   ],
+  providers: [Fcm],
   // providers: [AppService, AuthService, UserService],
   // controllers: [AppController, AuthController, UserController],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
+    this.fcm.init();
     consumer
       .apply(AuthMiddleware)
       .exclude(
