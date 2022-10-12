@@ -139,6 +139,7 @@ export class MatchService {
       const meetingTime = convertDateTime(new Date(convertKrDate));
       mySpeakers.push({
         channel: channel.channel,
+        channelId: channel.id,
         listenerId: Number(userId),
         speaker: {
           id: Number(speakerEntity.id),
