@@ -7,12 +7,13 @@ import {TypeOrmModule} from "@nestjs/typeorm";
 import {UserEntity} from "../entity/user.entity";
 import {ChannelEntity} from "../entity/channel";
 import {ConfigModule} from "@nestjs/config";
+import {Fcm} from "../util/notification/firebase/message/fcm";
 
 @Module({
   imports: [TypeOrmModule.forFeature([UserEntity, ChannelEntity])
     ,UserModule
     ,ConfigModule],
-  providers: [ChatService, ChatGateway],
+  providers: [ChatService, ChatGateway, Fcm],
   controllers: [ChatController],
 })
 export class ChatModule {}
