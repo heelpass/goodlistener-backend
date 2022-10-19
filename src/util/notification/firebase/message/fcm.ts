@@ -1,5 +1,6 @@
 import * as admin from 'firebase-admin';
 import { randomUUID } from 'crypto';
+import { NotFoundException } from '@nestjs/common';
 
 type Nullable<T> = T | null;
 export class Fcm {
@@ -29,23 +30,31 @@ export class Fcm {
    * @param message 'message'
    * @param token string token or null
    */
-  async pushMessage(userToken: string, flag: string, message: any, token: string) {
+  async pushMessage(
+    userToken: string,
+    flag: string,
+    content: any,
+    token: string
+  ) {
+    const title = '[굿 리스너]';
+    const hash = randomUUID();
+
     const payload = {
       notification: {
-        title: '[굿 리스너]',
-        body: message, //'5분 뒤에 전화가 올 예정입니다. 놓치지 말고 꼭 받아주세요.',
+        title,
+        body: content, //'5분 뒤에 전화가 올 예정입니다. 놓치지 말고 꼭 받아주세요.',
       },
       data: {
-        flag: flag || 'call', //'CALL_NOTIFICATION',
-        hash: randomUUID(),
-        token: token
+        flag: flag,
+        hash,
+        token: token,
       },
       apns: {
         payload: {
           aps: {
             alert: {
-              title: '[굿 리스너]',
-              body: message, //'5분 뒤에 전화가 올 예정입니다. 놓치지 말고 꼭 받아주세요.',
+              title,
+              body: content, //'5분 뒤에 전화가 올 예정입니다. 놓치지 말고 꼭 받아주세요.',
             },
             'mutable-content': 1,
           },
@@ -54,10 +63,13 @@ export class Fcm {
       token: userToken,
     };
 
-    admin
+    return admin
       .messaging()
       .send(payload, false)
-      .then((res) => console.log('success' + res))
-      .catch((err) => console.log(err));
+      .then((res) => ({ title, content, flag, hash }))
+      .catch((err) => {
+        console.log(err.message);
+        throw new NotFoundException('FCM 토큰 오류');
+      });
   }
 }
