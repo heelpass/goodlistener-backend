@@ -15,9 +15,8 @@ import { PushLogService } from 'src/push-log/push-log.service';
     TypeOrmModule.forFeature([UserEntity, ChannelEntity]),
     UserModule,
     ConfigModule,
-    PushLogService,
   ],
-  providers: [ChatService, ChatGateway, Fcm],
+  providers: [ChatService, ChatGateway, Fcm, PushLogService],
   controllers: [ChatController],
 })
 export class ChatModule {}
