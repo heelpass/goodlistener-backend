@@ -5,13 +5,14 @@ import { UserService } from 'src/user/user.service';
 import { UserEntity } from 'src/entity/user.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { PushLog } from 'src/entity/PushLog';
+import { Fcm } from 'src/util/notification/firebase/message/fcm';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([UserEntity]),
     TypeOrmModule.forFeature([PushLog]),
   ],
-  providers: [PushLogService, UserService, PushLog],
+  providers: [PushLogService, UserService, PushLog, Fcm],
   controllers: [PushLogController],
 })
 export class PushLogModule {}
