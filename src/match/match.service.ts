@@ -100,6 +100,7 @@ export class MatchService {
     if (listenerEntity) {
       return {
         channel: channelEntity.channel,
+        channelId: channelEntity.id,
         speakerId: Number(userId),
         listener: {
           id: Number(listenerEntity.id),
