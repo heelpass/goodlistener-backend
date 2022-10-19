@@ -4,4 +4,5 @@ export class chatRoomSetInitDto {
   channel: string
   meetingTime: string
   isListener: boolean
+  channelId:number
 }

@@ -9,10 +9,11 @@ import { ChannelEntity } from '../entity/channel';
 import { ConfigModule } from '@nestjs/config';
 import { Fcm } from '../util/notification/firebase/message/fcm';
 import { PushLogService } from 'src/push-log/push-log.service';
+import {PushLog} from "../entity/PushLog";
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([UserEntity, ChannelEntity]),
+    TypeOrmModule.forFeature([UserEntity, ChannelEntity, PushLog]),
     UserModule,
     ConfigModule,
   ],

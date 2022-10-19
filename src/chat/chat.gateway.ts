@@ -58,6 +58,7 @@ export class ChatGateway implements OnGatewayDisconnect {
     const user = await this.userService.findOne(userId);
     // 리스너의 아이디를 가져와서 생성한다.
     client.data.userId = userId;
+    client.data.channelId = data.channelId;
     client.data.fcmHash = user.fcmHash;
     client.data.listenerId = data.listenerId;
     client.data.speakerId = data.speakerId;
@@ -154,12 +155,13 @@ export class ChatGateway implements OnGatewayDisconnect {
   @SubscribeMessage('createAgoraToken')
   async getAgoraToken(client: Socket) {
     const { AGORA_APP_ID, AGORA_APP_CERTIFICATE } = process.env;
-    const { room, fcmHash } = client.data;
+    const { room, fcmHash, channelId } = client.data;
     const token = await this.chatRoomService.sendAgoraWebToken(
       AGORA_APP_ID,
       AGORA_APP_CERTIFICATE,
       true,
-      room
+      room,
+      channelId
     );
     console.log('token = ' + token);
     client.emit('createAgoraToken', token);

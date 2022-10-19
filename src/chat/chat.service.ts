@@ -119,7 +119,7 @@ export class ChatService {
     }
   }
 
-  async sendAgoraWebToken(appID: string, appCertificate: string, isPublisher: boolean, channel: string): Promise<string> {
+  async sendAgoraWebToken(appID: string, appCertificate: string, isPublisher: boolean, channel: string, channelId: number): Promise<string> {
     const uid = Math.floor(Math.random() * 100000);
     const expirationTimeInSeconds = 3600;
     const currentTimestamp = Math.floor(Date.now() / 1000);
