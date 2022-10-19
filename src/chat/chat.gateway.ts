@@ -62,12 +62,12 @@ export class ChatGateway
     if (user.kind.id === 1) {
       await this.chatRoomService.updateChannelInfo(data.speakerId, data.listenerId, false, true, data.meetingTime);
       // fcm 토큰으로 스피커에게 알림보내기
-      await this.fcm.pushMessage(user.fcmHash,'Call',`리스너(${data.listenerId})가 스피커(${data.speakerId})에게 전화를 겁니다`);
+      await this.fcm.pushMessage(user.fcmHash,'Call',`리스너(${data.listenerId})가 스피커(${data.speakerId})에게 전화를 겁니다`, '');
     }
 
     if (user.kind.id === 0) {
       await this.chatRoomService.updateChannelInfo(data.speakerId, data.listenerId, true, false, data.meetingTime);
-      await this.fcm.pushMessage(user.fcmHash,'SpeakerIn',`리스너(${data.listenerId})가 건 전화를 스피커(${data.speakerId})가 받았습니다.`);
+      await this.fcm.pushMessage(user.fcmHash,'SpeakerIn',`리스너(${data.listenerId})가 건 전화를 스피커(${data.speakerId})가 받았습니다.`, '');
     }
 
     const message = user.kind.id === 1 ? `userId : ${(userId)}번이  방 ${data.channel}를 만들었습니다` : `userId : ${(userId)}번이  접속했습니다.`;
@@ -123,7 +123,7 @@ export class ChatGateway
     const token = await this.chatRoomService.sendAgoraWebToken(AGORA_APP_ID, AGORA_APP_CERTIFICATE, true, room);
     console.log("token = " + token)
     client.emit('createAgoraToken', token);
-    await this.fcm.pushMessage(fcmHash,'AgoraToken',`리스너가 생성한 아고라 토큰(${token}) 스피커에게 보냅니다`)
+    await this.fcm.pushMessage(fcmHash,'AgoraToken',`리스너가 생성한 아고라 토큰을 스피커에게 보냅니다`, token);
     return token;
   }
 }

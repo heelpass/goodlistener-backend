@@ -1,5 +1,7 @@
 import * as admin from 'firebase-admin';
 import { randomUUID } from 'crypto';
+
+type Nullable<T> = T | null;
 export class Fcm {
   init() {
     admin.initializeApp({
@@ -25,8 +27,9 @@ export class Fcm {
    * @param userToken 'userFcmToken'
    * @param flag {string} 'call | match | before5minute'
    * @param message 'message'
+   * @param token string token or null
    */
-  async pushMessage(userToken: string, flag: string, message: any) {
+  async pushMessage(userToken: string, flag: string, message: any, token: string) {
     const payload = {
       notification: {
         title: '[굿 리스너]',
@@ -35,6 +38,7 @@ export class Fcm {
       data: {
         flag: flag || 'call', //'CALL_NOTIFICATION',
         hash: randomUUID(),
+        token: token
       },
       apns: {
         payload: {
