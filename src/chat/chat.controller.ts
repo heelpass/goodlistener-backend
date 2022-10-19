@@ -15,8 +15,8 @@ export class ChatController {
   async sendAgoraToken(@Body() body: sendTokenDto) {
     const appId = this.configService.get('AGORA_APP_ID');
     const appCertificate = this.configService.get('AGORA_APP_CERTIFICATE');
-    const {isPublisher, channel} = body;
-    return this.chatService.sendAgoraWebToken(appId, appCertificate, isPublisher, channel);
+    const {isPublisher, channel, channeId} = body;
+    return this.chatService.sendAgoraWebToken(appId, appCertificate, isPublisher, channel, channeId);
   }
 
   @Patch('/channel')

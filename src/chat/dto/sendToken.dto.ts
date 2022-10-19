@@ -1,4 +1,4 @@
-import {IsBoolean, IsNotEmpty, IsString} from "class-validator";
+import {IsBoolean, IsNotEmpty, IsNumber, IsString} from "class-validator";
 
 export class sendTokenDto {
   @IsString()
@@ -8,4 +8,7 @@ export class sendTokenDto {
   @IsBoolean()
   @IsNotEmpty()
   isPublisher: boolean;
+
+  @IsNumber()
+  channeId: number;
 }
