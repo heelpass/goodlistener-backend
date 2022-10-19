@@ -36,6 +36,7 @@ export class Fcm {
     content: any,
     token: string
   ) {
+    console.log(this.config());
     const title = '[굿 리스너]';
     const hash = randomUUID();
 
