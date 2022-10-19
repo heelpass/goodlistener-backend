@@ -37,7 +37,7 @@ export class PushLogService {
     flag: string,
     hash: string
   ) {
-    return await this.pushLogRepo.create({
+    return await this.pushLogRepo.save({
       userFcm,
       title,
       content,
