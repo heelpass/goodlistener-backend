@@ -55,11 +55,14 @@ export class ChatGateway implements OnGatewayDisconnect {
   @SubscribeMessage('setUserIn')
   async setUserIn(client: Socket, data: chatRoomSetInitDto): Promise<any> {
     const userId = data.isListener === true ? data.listenerId : data.speakerId;
+    const otherUserId = data.isListener === false ? data.listenerId : data.speakerId;
     const user = await this.userService.findOne(userId);
+    const otherUser = await this.userService.findOne(otherUserId);
     // 리스너의 아이디를 가져와서 생성한다.
     client.data.userId = userId;
     client.data.channelId = data.channelId;
     client.data.fcmHash = user.fcmHash;
+    client.data.otherUserFcmHash = otherUser.fcmHash;
     client.data.listenerId = data.listenerId;
     client.data.speakerId = data.speakerId;
     client.data.kindId = user.kind.id;
@@ -77,7 +80,7 @@ export class ChatGateway implements OnGatewayDisconnect {
       );
       // fcm 토큰으로 스피커에게 알림보내기
       await this.fcm.pushMessage(
-        user.fcmHash,
+        otherUser.fcmHash,
         'Call',
         `리스너(${data.listenerId})가 스피커(${data.speakerId})에게 전화를 겁니다`,
         ''
@@ -93,7 +96,7 @@ export class ChatGateway implements OnGatewayDisconnect {
         data.meetingTime
       );
       await this.fcm.pushMessage(
-        user.fcmHash,
+        otherUser.fcmHash,
         'SpeakerIn',
         `리스너(${data.listenerId})가 건 전화를 스피커(${data.speakerId})가 받았습니다.`,
         ''
