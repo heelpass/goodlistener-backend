@@ -119,12 +119,27 @@ export class ChatService {
     }
   }
 
-  async sendAgoraWebToken(appID: string, appCertificate: string, isPublisher: boolean, channel: string, channelId: number): Promise<string> {
-    const uid = Math.floor(Math.random() * 100000);
+  async sendAgoraWebToken(
+    appID: string,
+    appCertificate: string,
+    isPublisher: boolean,
+    channel: string,
+    channelId: number
+  ): Promise<string> {
+    // const uid = Math.floor(Math.random() * 100000);
     const expirationTimeInSeconds = 3600;
     const currentTimestamp = Math.floor(Date.now() / 1000);
     const privilegeExpiredTs = currentTimestamp + expirationTimeInSeconds;
-    const role = isPublisher ? Agora.RtcRole.PUBLISHER : Agora.RtcRole.SUBSCRIBER;
-    return Agora.RtcTokenBuilder.buildTokenWithUid(appID, appCertificate, channel, uid, role, privilegeExpiredTs);
+    const role = isPublisher
+      ? Agora.RtcRole.PUBLISHER
+      : Agora.RtcRole.SUBSCRIBER;
+    return Agora.RtcTokenBuilder.buildTokenWithUid(
+      appID,
+      appCertificate,
+      channel,
+      channelId,
+      role,
+      privilegeExpiredTs
+    );
   }
 }
