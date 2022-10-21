@@ -163,7 +163,7 @@ export class ChatGateway implements OnGatewayDisconnect {
       AGORA_APP_ID,
       AGORA_APP_CERTIFICATE,
       true,
-      room,
+      'room',
       channelId
     );
     console.log('token = ' + token);
