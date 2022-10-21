@@ -9,7 +9,9 @@ import { ChannelEntity } from '../entity/channel';
 import { ConfigModule } from '@nestjs/config';
 import { Fcm } from '../util/notification/firebase/message/fcm';
 import { PushLogService } from 'src/push-log/push-log.service';
-import {PushLog} from "../entity/PushLog";
+import { PushLog } from '../entity/PushLog';
+import { MatchService } from 'src/match/match.service';
+import { UserService } from 'src/user/user.service';
 
 @Module({
   imports: [
@@ -17,7 +19,14 @@ import {PushLog} from "../entity/PushLog";
     UserModule,
     ConfigModule,
   ],
-  providers: [ChatService, ChatGateway, Fcm, PushLogService],
+  providers: [
+    ChatService,
+    ChatGateway,
+    Fcm,
+    PushLogService,
+    MatchService,
+    UserService,
+  ],
   controllers: [ChatController],
 })
 export class ChatModule {}

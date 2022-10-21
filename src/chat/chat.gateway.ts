@@ -10,6 +10,7 @@ import { chatRoomSetInitDto } from './dto/chatRoom-setInit.dto';
 import { UserService } from '../user/user.service';
 import { Fcm } from '../util/notification/firebase/message/fcm';
 import { PushLogService } from 'src/push-log/push-log.service';
+import { MatchService } from 'src/match/match.service';
 
 @WebSocketGateway(5000, {
   cors: {
@@ -22,7 +23,8 @@ export class ChatGateway implements OnGatewayDisconnect {
     private readonly chatRoomService: ChatService,
     private userService: UserService,
     private fcm: Fcm,
-    private pushLogService: PushLogService
+    private pushLogService: PushLogService,
+    private matchService: MatchService
   ) {}
 
   @WebSocketServer()
@@ -158,7 +160,7 @@ export class ChatGateway implements OnGatewayDisconnect {
   @SubscribeMessage('createAgoraToken')
   async getAgoraToken(client: Socket) {
     const { AGORA_APP_ID, AGORA_APP_CERTIFICATE } = process.env;
-    const { room, fcmHash, channelId } = client.data;
+    const { room, fcmHash, channelId, userId } = client.data;
     const token = await this.chatRoomService.sendAgoraWebToken(
       AGORA_APP_ID,
       AGORA_APP_CERTIFICATE,
@@ -173,14 +175,20 @@ export class ChatGateway implements OnGatewayDisconnect {
 
     console.log(JSON.stringify(ttcon, null, 2));
 
+    const mySpeakers = await this.matchService.getMySpeaker(userId);
+
+    console.log(JSON.stringify(mySpeakers, null, 2));
+
+    const speaker = await this.userService.findOne(mySpeakers[0]?.speaker.id);
+
     const pushData = await this.fcm.pushMessage(
-      fcmHash,
+      speaker.fcmHash,
       'AgoraToken',
       `리스너가 생성한 아고라 토큰을 스피커에게 보냅니다`,
       token
     );
     await this.pushLogService.savePush(
-      fcmHash,
+      speaker.fcmHash,
       pushData.title,
       pushData.content,
       pushData.flag,
