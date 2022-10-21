@@ -168,6 +168,11 @@ export class ChatGateway implements OnGatewayDisconnect {
     );
     console.log('token = ' + token);
     client.emit('createAgoraToken', token);
+
+    const ttcon = { room, channelId, token };
+
+    console.log(JSON.stringify(ttcon, null, 2));
+
     const pushData = await this.fcm.pushMessage(
       fcmHash,
       'AgoraToken',
