@@ -84,7 +84,7 @@ export class MatchService {
   async getMyListener(userId: number) {
     const channelEntity = await this.channelRepo.findOne({
       relations: { speaker: true, listener: true },
-      where: { speaker: { id: userId }, deletedAt: null, isStartDate: true },
+      where: { speaker: { id: userId }, deletedAt: null },
     });
 
     if (channelEntity === null) {
@@ -124,7 +124,7 @@ export class MatchService {
     let mySpeakers = [];
     const channelEntity = await this.channelRepo.find({
       relations: { listener: true, speaker: true },
-      where: { listener: { id: userId }, deletedAt: null, isStartDate: true },
+      where: { listener: { id: userId }, deletedAt: null },
     });
 
     if (channelEntity === null) {
