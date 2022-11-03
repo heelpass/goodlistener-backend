@@ -43,7 +43,7 @@ export class UserService {
         fcmHash,
         description,
         profileImg,
-        kind: { id : 1 }
+        kind: { id : 0 }
       });
       return this.repo.save(user);
     } else {
