@@ -10,7 +10,7 @@ import { UserEntity } from '../entity/user.entity';
 @Injectable()
 export class UserService {
   constructor(
-    @InjectRepository(UserEntity) private repo: Repository<UserEntity>
+    @InjectRepository(UserEntity) private repo: Repository<UserEntity>,
   ) {}
 
   async create(
@@ -43,6 +43,7 @@ export class UserService {
         fcmHash,
         description,
         profileImg,
+        kind: { id : 0 }
       });
       return this.repo.save(user);
     } else {
